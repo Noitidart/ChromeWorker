@@ -12,7 +12,7 @@ var MB_OK = 0;
 
 var ret = msgBox(0, "Hello world", "title", MB_OK);
 
-lib.close();
+//lib.close();
 
 self.onmessage = function (msg) {
 	//dump('incoming message to ChromeWorker, msg:' + uneval(msg)); //does not dump to Browser Console
