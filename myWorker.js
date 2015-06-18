@@ -83,11 +83,11 @@ function takeScreenshot() {
 	var rez_gdkWinGetOrg = gdk_window_get_origin(rootGdkWin, x_orig.address(), y_orig.address());
 	console.info('x:', x_orig.value, 'y:', y_orig.value);
 	
-	/*
+	
 	var rootGdkDrawable = ctypes.cast(rootGdkWin, GdkDrawable.ptr);
 	var screenshot = gdk_pixbuf_get_from_drawable(null, rootGdkDrawable, null, x_orig.value, y_orig.value, 0, 0, width.value, height.value);
 	console.info('screenshot:', screenshot.toString());
-	*/
+	
 	
 	gdk2.close();
 }
