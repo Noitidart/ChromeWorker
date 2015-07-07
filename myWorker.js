@@ -1,3 +1,6 @@
+var idelfunc_c;
+var destroyfunc_c;
+	
 function takeScreenshot() {
 	var gdk2 = ctypes.open('libgdk-x11-2.0.so.0');
 	
@@ -115,13 +118,13 @@ function takeScreenshot() {
 		console.error('in idlefunc_js');
 		return true;
 	};
-	var idelfunc_c = GSourceFunc.ptr(idlefunc_js);
+	idelfunc_c = GSourceFunc.ptr(idlefunc_js);
 	
 	var destroyfunc_js = function(data) {
 		console.error('in destroyfunc_js')
 		return undefined;
 	};
-	var destroyfunc_c = GDestroyNotify.ptr(destroyfunc_js);
+	destroyfunc_c = GDestroyNotify.ptr(destroyfunc_js);
 	
 	var G_PRIORITY_HIGH_IDLE = 100;
 	var G_PRIORITY_DEFAULT_IDLE = 200;
@@ -129,7 +132,7 @@ function takeScreenshot() {
 	var rez_add = g_idle_add_full(G_PRIORITY_HIGH_IDLE, idelfunc_c, null, destroyfunc_c);
 	console.info('rez_add:', rez_add);
 	
-	gdk2.close();
+	//gdk2.close();
 }
 
 
