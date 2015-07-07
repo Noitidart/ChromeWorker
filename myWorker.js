@@ -69,6 +69,7 @@ function takeScreenshot() {
 	);
 	
 	var guint = ctypes.unsigned_int;
+	var gboolean = gint;
 	var gpointer = ctypes.void_t.ptr;
 	var GSource = ctypes.StructType('GSource'); // opaque per https://developer.gnome.org/glib/stable/glib-The-Main-Event-Loop.html#GSource
 	var GSourceFunc = ctypes.FunctionType(ctypes.default_abi, gboolean, [gpointer]); // https://developer.gnome.org/glib/stable/glib-The-Main-Event-Loop.html#GSourceFunc
@@ -110,6 +111,23 @@ function takeScreenshot() {
 	//var screenshot = gdk_pixbuf_get_from_drawable(null, rootGdkDrawable, null, x_orig.value, y_orig.value, 0, 0, width.value, height.value);
 	//console.info('screenshot:', screenshot.toString());
 	
+	var idlefunc_js = function(user_data) {
+		console.error('in idlefunc_js');
+		return true;
+	};
+	var idelfunc_c = GSourceFunc.ptr(idlefunc_js);
+	
+	var destroyfunc_js = function(data) {
+		console.error('in destroyfunc_js')
+		return undefined;
+	};
+	var destroyfunc_c = GDestroyNotify.ptr(destroyfunc_js);
+	
+	var G_PRIORITY_HIGH_IDLE = 100;
+	var G_PRIORITY_DEFAULT_IDLE = 200;
+	
+	var rez_add = g_idle_add_full(G_PRIORITY_HIGH_IDLE, idelfunc_c, null, destroyfunc_c);
+	console.info('rez_add:', rez_add);
 	
 	gdk2.close();
 }
