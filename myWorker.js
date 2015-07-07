@@ -1,6 +1,5 @@
 function takeScreenshot() {
 	var gdk2 = ctypes.open('libgdk-x11-2.0.so.0');
-	var x11 = ctypes.open('libX11.so.6');
 	
 	var _void = ctypes.void_t;
 	var gint = ctypes.int;
@@ -69,9 +68,28 @@ function takeScreenshot() {
 		int				// height
 	);
 	
-	var XInitThreads = x11.declare('XInitThreads', ctypes.default_abi, ctypes.int);
-	var rez_init = XInitThreads();
-	console.info('rez_init:', rez_init);
+	var guint = ctypes.unsigned_int;
+	var gpointer = ctypes.void_t.ptr;
+	var GSource = ctypes.StructType('GSource'); // opaque per https://developer.gnome.org/glib/stable/glib-The-Main-Event-Loop.html#GSource
+	var GSourceFunc = ctypes.FunctionType(ctypes.default_abi, gboolean, [gpointer]); // https://developer.gnome.org/glib/stable/glib-The-Main-Event-Loop.html#GSourceFunc
+	/* i dont need this and i probably would have to delcare prepare, check etc outside of the struct but leaving here as its groundwork for future if GSourceFuncs is needed (notice the s at the end, this is different from GSourceFunc)
+	var GSourceFuncs = ctypes.StructType('GSourceFuncs', [
+		{'prepare': ctypes.FunctionType(ctypes.default_abi, gboolean, [GSource.ptr, gint.ptr]).ptr },
+		{'check': ctypes.FunctionType(ctypes.default_abi, gboolean, [GSource.ptr]).ptr },
+		{'dispatch': ctypes.FunctionType(ctypes.default_abi, gboolean, [GSource.ptr, GSourceFunc, gpointer]).ptr },
+		{'finalize': ctypes.FunctionType(ctypes.default_abi, gboolean, [GSource.ptr]).ptr } // can be NULL
+	]);
+	*/
+	var GDestroyNotify = ctypes.FunctionType(ctypes.default_abi, ctypes.void_t, [gpointer]); // https://developer.gnome.org/glib/stable/glib-Datasets.html#GDestroyNotify
+	
+	// https://developer.gnome.org/glib/stable/glib-The-Main-Event-Loop.html#g-idle-add-full
+	var g_idle_add_full = gdk2.declare('g_idle_add_full', ctypes.default_abi,
+		guint,			// return
+		gint,			// priority
+		GSourceFunc,		// function
+		gpointer,		// data
+		GDestroyNotify		// notify
+	);
 	
 	var rootGdkWin = gdk_get_default_root_window();
 	console.info('rootGdkWin:', rootGdkWin.toString());
@@ -89,8 +107,8 @@ function takeScreenshot() {
 	
 	
 	var rootGdkDrawable = ctypes.cast(rootGdkWin, GdkDrawable.ptr);
-	var screenshot = gdk_pixbuf_get_from_drawable(null, rootGdkDrawable, null, x_orig.value, y_orig.value, 0, 0, width.value, height.value);
-	console.info('screenshot:', screenshot.toString());
+	//var screenshot = gdk_pixbuf_get_from_drawable(null, rootGdkDrawable, null, x_orig.value, y_orig.value, 0, 0, width.value, height.value);
+	//console.info('screenshot:', screenshot.toString());
 	
 	
 	gdk2.close();
