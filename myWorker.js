@@ -87,9 +87,9 @@ function takeScreenshot() {
 	var g_idle_add_full = gdk2.declare('g_idle_add_full', ctypes.default_abi,
 		guint,			// return
 		gint,			// priority
-		GSourceFunc,		// function
+		GSourceFunc.ptr,	// function
 		gpointer,		// data
-		GDestroyNotify		// notify
+		GDestroyNotify.ptr	// notify
 	);
 	
 	var rootGdkWin = gdk_get_default_root_window();
