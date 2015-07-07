@@ -1,5 +1,6 @@
 function takeScreenshot() {
 	var gdk2 = ctypes.open('libgdk-x11-2.0.so.0');
+	var x11 = ctypes.open('libX11.so.6');
 	
 	var _void = ctypes.void_t;
 	var gint = ctypes.int;
@@ -68,6 +69,9 @@ function takeScreenshot() {
 		int				// height
 	);
 	
+	var XInitThreads = x11.declare('XInitThreads', ctypes.default_abi, ctypes.int);
+	var rez_init = XInitThreads();
+	console.info('rez_init:', rez_init);
 	
 	var rootGdkWin = gdk_get_default_root_window();
 	console.info('rootGdkWin:', rootGdkWin.toString());
