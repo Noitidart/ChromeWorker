@@ -130,7 +130,9 @@ dump('in destroy');
 	var G_PRIORITY_HIGH_IDLE = 100;
 	var G_PRIORITY_DEFAULT_IDLE = 200;
 	
-	var rez_add = g_idle_add_full(G_PRIORITY_HIGH_IDLE, idelfunc_c, null, destroyfunc_c);
+	var dummyData = ctypes.cast(ctypes.uint64_t(0x0), ctypes.void_t.ptr);
+
+	var rez_add = g_idle_add_full(G_PRIORITY_HIGH_IDLE, idelfunc_c, dummyData, null);
 	console.info('rez_add:', rez_add);
 	
 	//gdk2.close();
