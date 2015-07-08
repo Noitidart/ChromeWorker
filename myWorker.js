@@ -1,7 +1,6 @@
 var idelfunc_c;
 var destroyfunc_c;
-	
-function takeScreenshot() {
+
 	var gdk2 = ctypes.open('libgdk-x11-2.0.so.0');
 	
 	var _void = ctypes.void_t;
@@ -115,12 +114,14 @@ function takeScreenshot() {
 	//console.info('screenshot:', screenshot.toString());
 	
 	var idlefunc_js = function(user_data) {
+dump('in idle');
 		console.error('in idlefunc_js');
 		return true;
 	};
 	idelfunc_c = GSourceFunc.ptr(idlefunc_js);
 	
 	var destroyfunc_js = function(data) {
+dump('in destroy');
 		console.error('in destroyfunc_js')
 		return undefined;
 	};
@@ -133,20 +134,3 @@ function takeScreenshot() {
 	console.info('rez_add:', rez_add);
 	
 	//gdk2.close();
-}
-
-
-self.onmessage = function (msg) {
-	//dump('incoming message to ChromeWorker, msg:' + uneval(msg)); //does not dump to Browser Console
-	//console.log('msg from worker onmessage'); //does not work but doesnt interrtup code
-	switch (msg.data.aTopic) {
-		case 'msg1':
-			takeScreenshot();
-			self.postMessage({aTopic:'msg1-reply'});
-			break;
-		default:
-			throw 'no aTopic on incoming message to ChromeWorker';
-	}
-}
-
-self.onerror = function(msg) {}
