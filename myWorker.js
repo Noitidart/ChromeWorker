@@ -94,6 +94,9 @@ var destroyfunc_c;
 		GDestroyNotify.ptr	// notify
 	);
 	
+var gdk_threads_enter = gdk2.declare('gdk_threads_enter', ctypes.default_abi, ctypes.void_t);
+var gdk_threads_leave = gdk2.declare('gdk_threads_leave', ctypes.default_abi, ctypes.void_t);
+
 	var rootGdkWin = gdk_get_default_root_window();
 	console.info('rootGdkWin:', rootGdkWin.toString());
 	
@@ -110,19 +113,17 @@ var destroyfunc_c;
 	
 	
 	var rootGdkDrawable = ctypes.cast(rootGdkWin, GdkDrawable.ptr);
-	//var screenshot = gdk_pixbuf_get_from_drawable(null, rootGdkDrawable, null, x_orig.value, y_orig.value, 0, 0, width.value, height.value);
-	//console.info('screenshot:', screenshot.toString());
-	
+	gdk_threads_enter();
+	var screenshot = gdk_pixbuf_get_from_drawable(null, rootGdkDrawable, null, x_orig.value, y_orig.value, 0, 0, width.value, height.value);
+	gdk_threads_leave();
+	console.info('screenshot:', screenshot.toString());
+	/*
 	var idlefunc_js = function(user_data) {
-dump('in idle');
-		console.error('in idlefunc_js');
 		return true;
 	};
 	idelfunc_c = GSourceFunc.ptr(idlefunc_js);
 	
 	var destroyfunc_js = function(data) {
-dump('in destroy');
-		console.error('in destroyfunc_js')
 		return undefined;
 	};
 	destroyfunc_c = GDestroyNotify.ptr(destroyfunc_js);
@@ -132,7 +133,8 @@ dump('in destroy');
 	
 	var dummyData = ctypes.cast(ctypes.uint64_t(0x0), ctypes.void_t.ptr);
 
-	var rez_add = g_idle_add_full(G_PRIORITY_HIGH_IDLE, idelfunc_c, dummyData, null);
-	console.info('rez_add:', rez_add);
-	
+	//var rez_add = g_idle_add_full(G_PRIORITY_HIGH_IDLE, idelfunc_c, dummyData, null);
+	//console.info('rez_add:', rez_add);
+	*/
+
 	//gdk2.close();
