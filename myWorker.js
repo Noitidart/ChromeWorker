@@ -71,7 +71,7 @@
 	var gboolean = gint;
 	var gpointer = ctypes.void_t.ptr;
 
-	var g_thread_init = gdk2.declare('g_thread_init', ctypes.default_abi, ctypes.void_t, gpointer);
+	var g_threads_init = gdk2.declare('g_threads_init', ctypes.default_abi, ctypes.void_t, gpointer);
 	var gdk_threads_init = gdk2.declare('gdk_threads_init', ctypes.default_abi, ctypes.void_t);
 	var gtk_init = gdk2.declare('gtk_init', ctypes.default_abi, ctypes.void_t, ctypes.int.ptr, ctypes.char.ptr.ptr.ptr);
 	var gdk_threads_enter = gdk2.declare('gdk_threads_enter', ctypes.default_abi, ctypes.void_t);
@@ -93,7 +93,7 @@
 	
 	
 	var rootGdkDrawable = ctypes.cast(rootGdkWin, GdkDrawable.ptr);
-	g_thread_init(null);
+	g_threads_init(null);
 	gdk_threads_init();
 	gtk_init(0, null);
 	gdk_threads_enter();
