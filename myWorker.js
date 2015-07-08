@@ -73,7 +73,7 @@
 
 	//var g_threads_init = gdk2.declare('g_threads_init', ctypes.default_abi, ctypes.void_t, gpointer);
 	var gdk_threads_init = gdk2.declare('gdk_threads_init', ctypes.default_abi, ctypes.void_t);
-	var gtk_init = gdk2.declare('gtk_init', ctypes.default_abi, ctypes.void_t, ctypes.int.ptr, ctypes.char.ptr.ptr.ptr);
+	//var gtk_init = gdk2.declare('gtk_init', ctypes.default_abi, ctypes.void_t, ctypes.int.ptr, ctypes.char.ptr.ptr.ptr);
 	var gdk_threads_enter = gdk2.declare('gdk_threads_enter', ctypes.default_abi, ctypes.void_t);
 	var gdk_threads_leave = gdk2.declare('gdk_threads_leave', ctypes.default_abi, ctypes.void_t);
 
@@ -95,7 +95,7 @@
 	var rootGdkDrawable = ctypes.cast(rootGdkWin, GdkDrawable.ptr);
 	//g_threads_init(null);
 	gdk_threads_init();
-	gtk_init(0, null);
+	//gtk_init(0, null);
 	gdk_threads_enter();
 	var screenshot = gdk_pixbuf_get_from_drawable(null, rootGdkDrawable, null, x_orig.value, y_orig.value, 0, 0, width.value, height.value);
 	gdk_threads_leave();
