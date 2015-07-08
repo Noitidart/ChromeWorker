@@ -1,6 +1,3 @@
-var idelfunc_c;
-var destroyfunc_c;
-
 	var gdk2 = ctypes.open('libgdk-x11-2.0.so.0');
 	
 	var _void = ctypes.void_t;
@@ -73,29 +70,12 @@ var destroyfunc_c;
 	var guint = ctypes.unsigned_int;
 	var gboolean = gint;
 	var gpointer = ctypes.void_t.ptr;
-	var GSource = ctypes.StructType('GSource'); // opaque per https://developer.gnome.org/glib/stable/glib-The-Main-Event-Loop.html#GSource
-	var GSourceFunc = ctypes.FunctionType(ctypes.default_abi, gboolean, [gpointer]); // https://developer.gnome.org/glib/stable/glib-The-Main-Event-Loop.html#GSourceFunc
-	/* i dont need this and i probably would have to delcare prepare, check etc outside of the struct but leaving here as its groundwork for future if GSourceFuncs is needed (notice the s at the end, this is different from GSourceFunc)
-	var GSourceFuncs = ctypes.StructType('GSourceFuncs', [
-		{'prepare': ctypes.FunctionType(ctypes.default_abi, gboolean, [GSource.ptr, gint.ptr]).ptr },
-		{'check': ctypes.FunctionType(ctypes.default_abi, gboolean, [GSource.ptr]).ptr },
-		{'dispatch': ctypes.FunctionType(ctypes.default_abi, gboolean, [GSource.ptr, GSourceFunc, gpointer]).ptr },
-		{'finalize': ctypes.FunctionType(ctypes.default_abi, gboolean, [GSource.ptr]).ptr } // can be NULL
-	]);
-	*/
-	var GDestroyNotify = ctypes.FunctionType(ctypes.default_abi, ctypes.void_t, [gpointer]); // https://developer.gnome.org/glib/stable/glib-Datasets.html#GDestroyNotify
-	
-	// https://developer.gnome.org/glib/stable/glib-The-Main-Event-Loop.html#g-idle-add-full
-	var g_idle_add_full = gdk2.declare('g_idle_add_full', ctypes.default_abi,
-		guint,			// return
-		gint,			// priority
-		GSourceFunc.ptr,	// function
-		gpointer,		// data
-		GDestroyNotify.ptr	// notify
-	);
-	
-var gdk_threads_enter = gdk2.declare('gdk_threads_enter', ctypes.default_abi, ctypes.void_t);
-var gdk_threads_leave = gdk2.declare('gdk_threads_leave', ctypes.default_abi, ctypes.void_t);
+
+	var g_thread_init = gdk2.declare('g_thread_init', ctypes.default_abi, ctypes.void_t, gpointer);
+	var gdk_threads_init = gdk2.declare('gdk_threads_init', ctypes.default_abi, ctypes.void_t);
+	var gtk_init = gdk2.declare('gtk_init', ctypes.default_abi, ctypes.void_t, ctypes.int.ptr, ctypes.char.ptr.ptr.ptr);
+	var gdk_threads_enter = gdk2.declare('gdk_threads_enter', ctypes.default_abi, ctypes.void_t);
+	var gdk_threads_leave = gdk2.declare('gdk_threads_leave', ctypes.default_abi, ctypes.void_t);
 
 	var rootGdkWin = gdk_get_default_root_window();
 	console.info('rootGdkWin:', rootGdkWin.toString());
@@ -113,15 +93,35 @@ var gdk_threads_leave = gdk2.declare('gdk_threads_leave', ctypes.default_abi, ct
 	
 	
 	var rootGdkDrawable = ctypes.cast(rootGdkWin, GdkDrawable.ptr);
+	g_thread_init(null);
+	gdk_threads_init();
+	gtk_init(0, null);
 	gdk_threads_enter();
 	var screenshot = gdk_pixbuf_get_from_drawable(null, rootGdkDrawable, null, x_orig.value, y_orig.value, 0, 0, width.value, height.value);
 	gdk_threads_leave();
 	console.info('screenshot:', screenshot.toString());
-	/*
+	
+	/* for gtk3
+	var GSourceFunc = ctypes.FunctionType(ctypes.default_abi, gboolean, [gpointer]); // https://developer.gnome.org/glib/stable/glib-The-Main-Event-Loop.html#GSourceFunc
+	var GDestroyNotify = ctypes.FunctionType(ctypes.default_abi, ctypes.void_t, [gpointer]); // https://developer.gnome.org/glib/stable/glib-Datasets.html#GDestroyNotify
+	
+	// https://developer.gnome.org/glib/stable/glib-The-Main-Event-Loop.html#g-idle-add-full
+	var g_idle_add_full = gdk2.declare('g_idle_add_full', ctypes.default_abi,
+		guint,			// return
+		gint,			// priority
+		GSourceFunc.ptr,	// function
+		gpointer,		// data
+		GDestroyNotify.ptr	// notify
+	);
+
+	
+	var idlefunc_c;
+	var destroyfunc_c;
+	
 	var idlefunc_js = function(user_data) {
 		return true;
 	};
-	idelfunc_c = GSourceFunc.ptr(idlefunc_js);
+	idlefunc_c = GSourceFunc.ptr(idlefunc_js);
 	
 	var destroyfunc_js = function(data) {
 		return undefined;
@@ -133,7 +133,7 @@ var gdk_threads_leave = gdk2.declare('gdk_threads_leave', ctypes.default_abi, ct
 	
 	var dummyData = ctypes.cast(ctypes.uint64_t(0x0), ctypes.void_t.ptr);
 
-	//var rez_add = g_idle_add_full(G_PRIORITY_HIGH_IDLE, idelfunc_c, dummyData, null);
+	//var rez_add = g_idle_add_full(G_PRIORITY_HIGH_IDLE, idlefunc_c, dummyData, null);
 	//console.info('rez_add:', rez_add);
 	*/
 
