@@ -25,7 +25,10 @@ function uninstall() {}
 
 function startup() {
 	loadAndSetupWorker(); //must do after startup
-	myWorker.postMessage({aTopic:'msg1'});
+	var rez_conf = Services.prompt.confirm(null, 'Action', 'Execute jsctypes?');
+	if (rez_conf) {
+		myWorker.postMessage({aTopic:'msg1'});
+	}
 }
  
 function shutdown(aReason) {
